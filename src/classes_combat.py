@@ -24,10 +24,13 @@ class Move():
         Initialization function
         @input url : url of the move
         """
-        pass
+        self.url = url
+        self.data = requests.get(self.url)
+        self.name = self.data["name"]
+        self.power = self.getPower()
     
     def getPower(self) -> int:
-        pass
+        return self.data["power"]
     
     def __str__(self) -> str:
         pass
@@ -36,10 +39,11 @@ class Move():
         """
         Test the equality with another class Move
         """
-        pass
+        return self.name == moveB.name
     
     def __eq__(self, moveB : str) -> bool:
         """
         Test the equality only with the name of the move
         """
-        pass
+        return self.name == moveB
+

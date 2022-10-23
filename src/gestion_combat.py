@@ -18,6 +18,19 @@ class FightManager():
     """
     Class used to manage the battle between two given (or random) pokemons
     """
+
+    r = requests.get("https://pokeapi.co/api/v2/pokemon")
+
+    data_pokemons = r.json()
+    list_pokemons = [Pokemon(aPokemon["name"]) for aPokemon in data_pokemons["results"]]
+
+    while data_pokemons["next"] is not None:
+        r = requests.get(data_pokemons["next"])
+        data_pokemons = r.json()
+
+        for aPokemon in data_pokemons["results"]:
+            list_pokemons.append(Pokemon(aPokemon["name"]))
+
     # ------------------------------------------------------------------------ #
     # 4.7 : Faire le constructeur
     # ------------------------------------------------------------------------ #
@@ -31,8 +44,9 @@ class FightManager():
         """
         
         self.base_url = base_url
+        if pok1 is None: self.pok1 = self.choose_random_pokemon()
+        if pok2 is None: self.pok2 = self.choose_random_pokemon()
 
-        pass
         
     def choose_random_pokemon(self):
         """
@@ -40,7 +54,8 @@ class FightManager():
 
         @return :   Pokemon object of the random selected pokemon
         """
-        pass
+        size_list_pokemons = len(FightManager.list_pokemons) - 1
+        return FightManager.list_pokemons[random.randint(0, size_list_pokemons)]
 
     # ------------------------------------------------------------------------ #
     # 4.8 : Formule de calcul de dégats
@@ -54,7 +69,7 @@ class FightManager():
 
         @return :                   Damage points
         """
-        pass
+        return (3*attack / 50*defense) + 2
     
 
 
@@ -68,4 +83,53 @@ class FightManager():
         @input latent time :    Number of seconds between each display
         """
 
-        pass
+        nb_alea = random.randint(1, 2)
+        first_pokemon_attacking = self.pok1 if nb_alea == 1 else self.pok2
+        first_pokemon_attacked = self.pok2 if nb_alea == 1 else self.pok1
+
+        attack_random = first_pokemon_attacking.list_move[
+            random.randint(0, len(first_pokemon_attacking.list_move))
+        ]
+        damage = self.calculate_damage(attack_random.power, first_pokemon_attacked.defense)
+        first_pokemon_attacked.take_damage(damage)
+
+        cpt = 0
+        print(f'-----------STEP {cpt} \n')
+        print(f'--Pokemon en attaque : {first_pokemon_attacking.name}\n')
+        first_pokemon_attacking.display_health()
+        print(f'Attaque/Puissance: {attack_random.name}/{attack_random.power}')
+
+        print(f'--Pokemon en defense : {first_pokemon_attacked.name}\n')
+        first_pokemon_attacked.display_health()
+
+        while first_pokemon_attacking.health != 0 or first_pokemon_attacking.health != 0:
+            if cpt%2 == 0:
+                attack_random = first_pokemon_attacked.list_move[
+                    random.randint(0, len(first_pokemon_attacked.list_move))
+                ]
+                damage = self.calculate_damage(attack_random.power, first_pokemon_attacking.defense)
+                first_pokemon_attacking.take_damage(damage)
+
+                print(f'-----------STEP {cpt} \n')
+                print(f'--Pokemon en attaque : {first_pokemon_attacked.name}\n')
+                first_pokemon_attacked.display_health()
+                print(f'Attaque/Puissance: {attack_random.name}/{attack_random.power}')
+
+                print(f'--Pokemon en defense : {first_pokemon_attacking.name}\n')
+                first_pokemon_attacking.display_health()
+
+            else:
+                attack_random = first_pokemon_attacking.list_move[
+                    random.randint(0, len(first_pokemon_attacking.list_move))]
+                damage = self.calculate_damage(attack_random.power, first_pokemon_attacked.defense)
+                first_pokemon_attacked.take_damage(damage)
+
+                print(f'-----------STEP {cpt} \n')
+                print(f'--Pokemon en attaque : {first_pokemon_attacking.name}\n')
+                first_pokemon_attacking.display_health()
+                print(f'Attaque/Puissance: {attack_random.name}/{attack_random.power}')
+
+                print(f'--Pokemon en defense : {first_pokemon_attacked.name}\n')
+                first_pokemon_attacked.display_health()
+
+            cpt += 1

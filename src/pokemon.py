@@ -14,7 +14,7 @@ Ce fichier contient la définition de la classe Pokemon
 import requests
 import random
 
-from .classes_combat import Move
+from classes_combat import Move
 from PIL import Image
 from io import BytesIO
 import matplotlib.pyplot as plt
@@ -43,6 +43,10 @@ class Pokemon():
         self.height = self.data['height']
         self.get_color()
         self.reset_comparison_attribute()
+
+        self.get_stats()
+
+        self.list_moves = self.choose_moves()
 
     # ------------------------------------------------------------------------ #
     # 2.2 : Faire la méthode __str__
@@ -132,18 +136,23 @@ class Pokemon():
         """
         Collect stats usefull for the fight
         """
-
-
-        pass
+        self.health = self.data["stats"][0]["base_stat"]
+        self.attack = self.data["stats"][1]["base_stat"]
+        self.defense = self.data["stats"][1]["base_stat"]
 
     # ------------------------------------------------------------------------ #
-    # 4.6 : Afficher la santé
+    # 4.6 : Choisit les mouvements
     # ------------------------------------------------------------------------ #
-    def choose_moves(self) -> None:
-        """
-        Select the 4 moves which the pokemon can use in battle
-        """
-        pass
+    def choose_moves(self):
+        list_moves = []
+        if self.data["moves"] is not None and len(self.data["moves"]) >= 4:
+            for i in range(len(self.data["moves"])):
+                nb_alea = random.randint(0, len(self.data["moves"]))
+                new_move = Move(self.data["moves"][nb_alea]["move"]["url"])
+                if new_move.power > 10:
+                    list_moves.append(new_move)
+
+        return list_moves
     
     # ------------------------------------------------------------------------ #
     # 4.4 : Afficher la santé et la perdre au besoin
@@ -152,13 +161,15 @@ class Pokemon():
         """
         Used to display the actual health level of the pokemon
         """
-        pass
+        nb_barre = int(self.health / 6)
+        for i in range(nb_barre):
+            print("#")
     
     def get_HP(self):
         pass
     
     def take_damage(self, HP):
-        pass
+        self.health -= HP
 
     def get_def(self):
         pass
@@ -171,4 +182,7 @@ class Pokemon():
         """
         #Move selection
         pass
+
+
+
 
