@@ -25,15 +25,15 @@ class Move():
         @input url : url of the move
         """
         self.url = url
-        self.data = requests.get(self.url)
+        self.data = requests.get(self.url).json()
         self.name = self.data["name"]
         self.power = self.getPower()
     
     def getPower(self) -> int:
-        return self.data["power"]
+        return self.data["power"] if self.data["power"] is not None else 0
     
     def __str__(self) -> str:
-        pass
+        return f'MoveName : {self.name} \nPower {self.power}'
 
     def __eq__(self, moveB : object) -> bool:
         """

@@ -9,10 +9,12 @@ Modified By: Ammar Mian
 Copyright (c) 2022 Université Savoie Mont-Blanc
 -----
 '''
+
 from pokemon import Pokemon
 import random
 import time
 import requests
+
 
 class FightManager():
     """
@@ -21,15 +23,15 @@ class FightManager():
 
     r = requests.get("https://pokeapi.co/api/v2/pokemon")
 
-    data_pokemons = r.json()
-    list_pokemons = [Pokemon(aPokemon["name"]) for aPokemon in data_pokemons["results"]]
+    data_pokemons_name = r.json()
+    list_pokemons_name = [aPokemon["name"] for aPokemon in data_pokemons_name["results"]]
 
-    while data_pokemons["next"] is not None:
-        r = requests.get(data_pokemons["next"])
-        data_pokemons = r.json()
+    while data_pokemons_name["next"] is not None:
+        r = requests.get(data_pokemons_name["next"])
+        data_pokemons_name = r.json()
 
-        for aPokemon in data_pokemons["results"]:
-            list_pokemons.append(Pokemon(aPokemon["name"]))
+        for aPokemon in data_pokemons_name["results"]:
+            list_pokemons_name.append(aPokemon["name"])
 
     # ------------------------------------------------------------------------ #
     # 4.7 : Faire le constructeur
@@ -42,20 +44,20 @@ class FightManager():
         @input pok2 :           Player 2 pokemon (if None, random pokemon is selected) - default : None
         @input base_url :       URL where to find all data (not specific to the list of pokemons)
         """
-        
+
         self.base_url = base_url
         if pok1 is None: self.pok1 = self.choose_random_pokemon()
         if pok2 is None: self.pok2 = self.choose_random_pokemon()
 
-        
+
     def choose_random_pokemon(self):
         """
         Random pokemon selection
 
         @return :   Pokemon object of the random selected pokemon
         """
-        size_list_pokemons = len(FightManager.list_pokemons) - 1
-        return FightManager.list_pokemons[random.randint(0, size_list_pokemons)]
+        size_list_pokemons = len(FightManager.list_pokemons_name) - 1
+        return Pokemon(FightManager.list_pokemons_name[random.randint(0, size_list_pokemons)])
 
     # ------------------------------------------------------------------------ #
     # 4.8 : Formule de calcul de dégats
@@ -70,12 +72,13 @@ class FightManager():
         @return :                   Damage points
         """
         return (3*attack / 50*defense) + 2
-    
+
 
 
     # ------------------------------------------------------------------------ #
     # 4.9 : Gérer le combat
     # ------------------------------------------------------------------------ #
+
     def run_fight(self, latent_time = 2):
         """
         Battle progressing
@@ -133,3 +136,8 @@ class FightManager():
                 first_pokemon_attacked.display_health()
 
             cpt += 1
+
+
+
+print("ICIII")
+

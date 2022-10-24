@@ -20,6 +20,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 from matplotlib.image import imread
 
+
 class Pokemon():
     """
     Class for a specific pokemon
@@ -146,9 +147,11 @@ class Pokemon():
     def choose_moves(self):
         list_moves = []
         if self.data["moves"] is not None and len(self.data["moves"]) >= 4:
-            for i in range(len(self.data["moves"])):
-                nb_alea = random.randint(0, len(self.data["moves"]))
+            for i in range(4):
+                nb_alea = random.randint(0, len(self.data["moves"]) - 1)
                 new_move = Move(self.data["moves"][nb_alea]["move"]["url"])
+                # print(f'{self.name}\n')
+                # print(new_move)
                 if new_move.power > 10:
                     list_moves.append(new_move)
 
